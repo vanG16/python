@@ -1,0 +1,494 @@
+cuando se encuentra la palabra var es un simple indicativo explicito de que es una variable
+
+esto es un clon de chess.js escrito en javascript:
+https://github.com/jhlywa/chess.js/
+
+### Constructor: Chess([ fen ])
+
+```Python
+<-- con la FEN de inicio partida -->
+ajedrez = Chess()   
+<-- se empieza a partir de una posición determinada -->
+ajedrez = Chess(''4k3/4P3/4K3/8/8/8/8/8 b - - 0 78'')
+
+
+### .ascii()
+
+Devuelve una cadena que contiene un diagrama ASCII de la posición actual.
+
+```Python
+var chess = new Chess()
+
+// se hacen varios movimientos
+chess.move('e4')
+chess.move('e5')
+chess.move('f4')
+
+chess.ascii();
+// -> '   +------------------------+
+//      8 | r  n  b  q  k  b  n  r |
+//      7 | p  p  p  p  .  p  p  p |
+//      6 | .  .  .  .  .  .  .  . |
+//      5 | .  .  .  .  p  .  .  . |
+//      4 | .  .  .  .  P  P  .  . |
+//      3 | .  .  .  .  .  .  .  . |
+//      2 | P  P  P  P  .  .  P  P |
+//      1 | R  N  B  Q  K  B  N  R |
+//        +------------------------+
+//          a  b  c  d  e  f  g  h'
+```
+
+
+### .clear()
+Limpia/vacía el tablero.
+
+```Python
+chess.clear()
+chess.fen()
+// -> '8/8/8/8/8/8/8/8 w - - 0 1' <- tablero sin piezas
+```
+
+
+### .fen()
+Devuelve la cadena FEN de la posición actual.
+
+```Python
+chess = new Chess()
+
+// hacemos algunos movimientos
+chess.move('e4')
+chess.move('e5')
+chess.move('f4')
+
+chess.fen();
+// -> 'rnbqkbnr/pppp1ppp/8/4p3/4PP2/8/PPPP2PP/RNBQKBNR b KQkq f3 0 2'
+```
+
+
+### .game_over()
+Retorna True si la partida ha terminado via jaque mate, ahogado (stalemate), tablas(draw), 
+repetición tres jugadas o material insuficiente. De otro modo el retorno es False.
+
+```Python
+chess = new Chess()
+chess.game_over()
+// -> False
+
+chess.load('4k3/4P3/4K3/8/8/8/8/8 b - - 0 78')
+chess.game_over()
+// -> True (stalemate)
+
+chess.load('rnb1kbnr/pppp1ppp/8/4p3/5PPq/8/PPPPP2P/RNBQKBNR w KQkq - 1 3')
+chess.game_over()
+// -> True (checkmate)
+
+
+### .get(square)
+Devuelve la pieza en la casilla indicada:
+
+```Python
+chess.clear()
+chess.put({ 'type': chess.PAWN, 'color': chess.BLACK }, 'a5') // ponemos un peón en a5
+
+chess.get('a5')
+// -> { 'type': 'p', 'color': 'b' },
+chess.get('a6')
+// -> None
+```
+
+
+### .historia([ options ])
+Devuelve una lista que contiene los movimientos del juego actual. 
+options es un parámetro opcional que puede contener un indicador "detallado". 
+Vea .moves () para una descripción de los campos verbose move.
+
+```Python
+var chess = new Chess()
+chess.move('e4')
+chess.move('e5')
+chess.move('f4')
+chess.move('exf4')
+
+chess.historia()
+// -> ['e4', 'e5', 'f4', 'exf4']
+
+chess.historia({ 'verbose': True })
+// -> [{ color: 'w', from: 'e2', to: 'e4', flags: 'b', piece: 'p', san: 'e4' },
+//     { color: 'b', from: 'e7', to: 'e5', flags: 'b', piece: 'p', san: 'e5' },
+//     { color: 'w', from: 'f2', to: 'f4', flags: 'b', piece: 'p', san: 'f4' },
+//     { color: 'b', from: 'e5', to: 'f4', flags: 'c', piece: 'p', captured: 'p', san: 'exf4' }]
+```
+
+
+### .inCheck()
+Devuelve True o False si el lado a mover está en jaque.
+
+```Python
+var chess = new Chess('rnb1kbnr/pppp1ppp/8/4p3/5PPq/8/PPPPP2P/RNBQKBNR w KQkq - 1 3')
+chess.inCheck()
+// -> True
+```
+
+
+### .inCheckmate()
+Devuelve True o False si el lado a mover ha recibido jaque mate.
+
+```Python
+var chess = new Chess('rnb1kbnr/pppp1ppp/8/4p3/5PPq/8/PPPPP2P/RNBQKBNR w KQkq - 1 3')
+chess.inCheckmate()
+// -> True
+
+
+### .inDraw()
+Returns true or false if the game is drawn (50-move rule or insufficient material).
+
+```Python
+var chess = new Chess('4k3/4P3/4K3/8/8/8/8/8 b - - 0 78')
+chess.inDraw()
+// -> True
+```
+
+
+### .inStalemate()
+Returns true or false if the side to move has been stalemated.
+
+```Python
+var chess = new Chess('4k3/4P3/4K3/8/8/8/8/8 b - - 0 78')
+chess.inStalemate()
+// -> True
+```
+
+
+### .inThreefoldRepetition()
+Returns true or false if the current board position has occurred three or more
+times.
+
+```Python
+var chess = new Chess('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
+// -> True
+// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq occurs 1st time
+chess.inThreefoldRepetition()
+// -> False
+
+chess.move('Nf3'); chess.move('Nf6'); chess.move('Ng1'); chess.move('Ng8')
+// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq occurs 2nd time
+chess.inThreefoldRepetition()
+// -> False
+
+chess.move('Nf3'); chess.move('Nf6'); chess.move('Ng1'); chess.move('Ng8')
+// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq occurs 3rd time
+chess.inThreefoldRepetition();
+// -> True
+```
+
+
+### .header()
+Allows header information to be added to PGN output. Any number of key/value
+pairs can be passed to .header().
+
+```Python
+chess.header('White', 'Robert James Fischer')
+chess.header('Black', 'Mikhail Tal')
+
+no admite llamadas de tipo multiple:
+
+chess.header('White', 'Morphy', 'Black', 'Anderssen', 'Date', '1858-??-??')
+
+debe ser siempre del tipo ("clave", "valor")
+```
+
+Calling .header() without any arguments returns the header information as an object.
+
+```Python
+chess.header()
+// -> { White: 'Morphy', Black: 'Anderssen', Date: '1858-??-??' }
+```
+
+
+### .insufficientMaterial()
+Returns true if the game is drawn due to insufficient material (K vs. K,
+K vs. KB, or K vs. KN); otherwise false.
+
+```Python
+var chess = new Chess('k7/8/n7/8/8/8/8/7K b - - 0 1')
+chess.insufficientMaterial()
+// -> true
+```
+
+
+### .load(fen)
+The board is cleared, and the FEN string is loaded.  Returns true if the position was
+successfully loaded, otherwise false.
+
+```Python
+var chess = new Chess();
+chess.load('4r3/8/2p2PPk/1p6/pP2p1R1/P1B5/2P2K2/3r4 w - - 1 45')
+// -> True
+
+chess.load('4r3/8/X12XPk/1p6/pP2p1R1/P1B5/2P2K2/3r4 w - - 1 45')
+// -> False, bad piece X
+```
+
+
+chess.fen()
+// -> 1r3kr1/pbpBBp1p/1b3P2/8/8/2P2q2/P4PPP/3R2K1 b - - 0 24
+
+chess.ascii()
+// -> '  +------------------------+
+//     8 | .  r  .  .  .  k  r  . |
+//     7 | p  b  p  B  B  p  .  p |
+//     6 | .  b  .  .  .  P  .  . |
+//     5 | .  .  .  .  .  .  .  . |
+//     4 | .  .  .  .  .  .  .  . |
+//     3 | .  .  P  .  .  q  .  . |
+//     2 | P  .  .  .  .  P  P  P |
+//     1 | .  .  .  R  .  .  K  . |
+//       +------------------------+
+//         a  b  c  d  e  f  g  h'
+```
+
+### .move(move, [ options ])
+Attempts to make a move on the board, returning a move object if the move was
+legal, otherwise None.  The .move function can be called two ways, by passing
+a string in Standard Algebraic Notation (SAN):
+
+```Python
+var chess = new Chess();
+
+chess.move('e4')
+// -> { color: 'w', from: 'e2', to: 'e4', flags: 'b', piece: 'p', san: 'e4' }
+
+chess.move('nf6') // SAN is case sensitive!!
+// -> None
+
+chess.move('Nf6')
+// -> { color: 'b', from: 'g8', to: 'f6', flags: 'n', piece: 'n', san: 'Nf6' }
+```
+
+Or by passing .move() a move object (only the 'to', 'from', and when necessary
+'promotion', fields are needed):
+
+```Python
+var chess = new Chess();
+
+chess.move({ 'from': 'g2', 'to': 'g3' });
+// -> { 'color': 'w', 'from': 'g2', 'to': 'g3', 'flags': 'n', 'piece': 'p', 'san': 'g3' }
+```
+
+An optional sloppy flag can be used to parse a variety of non-standard move
+notations:
+
+```Python
+
+var chess = new Chess();
+
+// various forms of Long Algebraic Notation
+chess.move('e2e4', {sloppy: true});
+// -> { color: 'w', from: 'e2', to: 'e4', flags: 'b', piece: 'p', san: 'e4' }
+chess.move('e7-e5', {sloppy: true});
+// -> { color: 'b', from: 'e7', to: 'e5', flags: 'b', piece: 'p', san: 'e5' }
+chess.move('Pf2f4', {sloppy: true});
+// -> { color: 'w', from: 'f2', to: 'f4', flags: 'b', piece: 'p', san: 'f4' }
+chess.move('Pe5xf4', {sloppy: true});
+// -> { color: 'b', from: 'e5', to: 'f4', flags: 'c', piece: 'p', captured: 'p', san: 'exf4' }
+
+
+// correctly parses incorrectly disambiguated moves
+chess = new Chess('r2qkbnr/ppp2ppp/2n5/1B2pQ2/4P3/8/PPP2PPP/RNB1K2R b KQkq - 3 7');
+
+chess.move('Nge7');  // Ne7 is unambiguous because the knight on c6 is pinned
+// -> null / None en Python
+
+chess.move('Nge7', {'sloppy': True});
+// -> { color: 'b', from: 'g8', to: 'e7', flags: 'n', piece: 'n', san: 'Ne7' }
+```
+
+### .moves([ options ])
+Returns a list of legal moves from the current position.  The function takes an optional parameter which controls the single-square move generation and verbosity.
+
+```Python
+var chess = new Chess();
+chess.moves();
+// -> ['a3', 'a4', 'b3', 'b4', 'c3', 'c4', 'd3', 'd4', 'e3', 'e4',
+//     'f3', 'f4', 'g3', 'g4', 'h3', 'h4', 'Na3', 'Nc3', 'Nf3', 'Nh3']
+
+
+chess.moves({ 'verbose': True });
+// -> [{ color: 'w', from: 'a2', to: 'a3',
+//       flags: 'n', piece: 'p', san 'a3'
+//       # a captured: key is included when the move is a capture
+//       # a promotion: key is included when the move is a promotion
+//     },
+//     ...
+//     ]
+```
+
+The _piece_, _captured_, and _promotion_ fields contain the lowercase
+representation of the applicable piece.
+
+The _flags_ field in verbose mode may contain one or more of the following values:
+
+- 'n' - a non-capture
+- 'b' - a pawn push of two squares
+- 'e' - an en passant capture
+- 'c' - a standard capture
+- 'p' - a promotion
+- 'k' - kingside castling
+- 'q' - queenside castling
+
+A flag of 'pc' would mean that a pawn captured a piece on the 8th rank and promoted.
+
+
+
+### .pgn([ options ])
+Returns the game in PGN format. Options is an optional parameter which may include
+max width and/or a newline character settings.
+
+```Python
+var chess = new Chess()
+chess.header('White', 'Plunky', 'Black', 'Plinkie')
+chess.move('e4')
+chess.move('e5')
+chess.move('Nc3')
+chess.move('Nc6')
+
+chess.pgn({ max_width: 5, newline_char: '<br />' })
+// -> '[White "Plunky"]<br />[Black "Plinkie"]<br /><br />1. e4 e5<br />2. Nc3 Nc6'
+
+
+### .put(piece, square)
+Place a piece on the square where piece is an object with the form
+{ 'type': ..., 'color': ... }.  Returns true if the piece was successfully placed,
+otherwise, the board remains unchanged and false is returned.  `put()` will fail
+when passed an invalid piece or square, or when two or more kings of the
+same color are placed.
+
+```Python
+chess.clear()
+
+chess.put({ 'type': chess.PAWN, 'color': chess.BLACK }, 'a5') // put a black pawn on a5
+// -> True
+chess.put({ type: 'k', color: 'w' }, 'h1') // shorthand
+// -> True
+
+chess.fen();
+// -> '8/8/8/p7/8/8/8/7K w - - 0 0'
+
+chess.put({ 'type': 'z', 'color': 'w' }, 'a1') // invalid piece
+// -> false
+
+chess.clear()
+
+chess.put({ 'type': 'k', 'color': 'w' }, 'a1')
+// -> True
+
+chess.put({ type: 'k', color: 'w' }, 'h1') // fail - two kings
+// -> False
+
+```
+
+### .remove(square)
+Remove and return the piece on _square_.
+
+```Python
+chess.clear()
+chess.put({ type: chess.PAWN, color: chess.BLACK }, 'a5') // put a black pawn on a5
+chess.put({ type: chess.KING, color: chess.WHITE }, 'h1') // put a white king on h1
+
+chess.remove('a5');
+// -> { type: 'p', color: 'b' },
+chess.remove('h1');
+// -> { type: 'k', color: 'w' },
+chess.remove('e1');
+// -> None
+```
+
+### .reset()
+Reset the board to the initial starting position.
+
+
+### .squareColor(square)
+Returns the color of the square ('light' or 'dark').
+
+```Python
+var chess = Chess()
+chess.squareColor('h1')
+// -> 'light'
+chess.squareColor('a7')
+// -> 'dark'
+chess.squareColor('bogus square')
+// -> None
+```
+
+
+### .turno()
+Returns the current side to move.
+
+```Python
+chess.load('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1')
+chess.turno()
+// -> 'b'
+```
+
+
+
+### .undo()
+Takeback the last half-move, returning a move object if successful, otherwise null.
+
+```python
+var chess = new Chess();
+
+chess.fen();
+// -> 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+chess.move('e4');
+chess.fen();
+// -> 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1'
+
+chess.undo();
+// -> { color: 'w', from: 'e2', to: 'e4', flags: 'b', piece: 'p', san: 'e4' }
+chess.fen();
+// -> 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+chess.undo();
+// -> None
+```
+
+
+### .validateFen(fen):
+Returns a validation object specifying validity or the errors found within the
+FEN string.
+
+```Python
+chess.validateFen('2n1r3/p1k2pp1/B1p3b1/P7/5bP1/2N1B3/1P2KP2/2R5 b - - 4 25');
+// -> { valid: true, error_number: 0, error: 'No errors.' }
+
+chess.validateFen('4r3/8/X12XPk/1p6/pP2p1R1/P1B5/2P2K2/3r4 w - - 1 45');
+// -> { valid: false, error_number: 9,
+//     error: '1st field (piece positions) is invalid [invalid piece].' }
+```
+
+
+### 
+### .loadPgn(pgn)
+Load the moves of a game stored in
+[Portable Game Notation](http://en.wikipedia.org/wiki/Portable_Game_Notation).
+Options may also contain a `sloppy` flag which allows chess.js
+to parse moves in various non-standard notations  (see `.move` documentation
+for more information).  Returns true if the PGN was parsed successfully,
+otherwise false.
+
+```Python
+Para iniciar la clase es : 
+
+chess.PgnParser.
+loadPgn es el méotodo/fución iniciadora dentro de la clase.
+
+P.ej.:
+from parser_partida import parseaPrincipal as zz
+a=zz.PgnParser(archivoPgn)
+
+
+
+
+
+
+
